@@ -1,37 +1,29 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit'
+import { filterSlice } from './filterSlice'
+import { phoneBookSlice } from './phoneBook/phoneBookSlice'
 import {
   persistStore,
-  persistReducer,
   FLUSH,
   REHYDRATE,
   PAUSE,
   PERSIST,
   PURGE,
   REGISTER,
-} from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
-import { tasksReducer } from './tasks/slice';
-import { authReducer } from './auth/slice';
-
-// Persisting token field from auth slice to localstorage
-const authPersistConfig = {
-  key: 'auth',
-  storage,
-  whitelist: ['token'],
-};
+} from 'redux-persist'
+import { authPersistReducer } from './auth/authSlice';
 
 export const store = configureStore({
-  reducer: {
-    auth: persistReducer(authPersistConfig, authReducer),
-    tasks: tasksReducer,
-  },
-  middleware: getDefaultMiddleware =>
-    getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-      },
-    }),
-  devTools: process.env.NODE_ENV === 'development',
+    reducer: {
+        auth: authPersistReducer,
+        phoneBook: phoneBookSlice.reducer,
+        filter: filterSlice.reducer,
+    },
+    middleware: getDefaultMiddleware =>
+        getDefaultMiddleware({
+            serializableCheck: {
+                ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+            },
+        }),
 });
 
 export const persistor = persistStore(store);
